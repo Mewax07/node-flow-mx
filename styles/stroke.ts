@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 
 export type StrokeStyleConfig = Partial<{
     size: number;

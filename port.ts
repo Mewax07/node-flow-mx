@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../libs";
+import { HtmlCanvas } from ".";
 import { Camera } from "./camera";
 import { Connection } from "./connection";
 import { RenderElementBase } from "./elements/base";

@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Text } from "../utils/text";
 import { Vector2 } from "../utils/vector";
 import { RenderElementBase, RenderElementBaseStyling } from "./base";

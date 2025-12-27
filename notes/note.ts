@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Camera } from "../camera";
 import { buildMarkdown } from "../markdown";
 import { MarkdownEntry } from "../markdown/entry";

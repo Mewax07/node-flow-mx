@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { FontWeight, TextStyle, TextStyleConfig } from "../styles/text";
 import { Cfg } from "./config";
 import { splitString, splitStringIntoLines } from "./string";

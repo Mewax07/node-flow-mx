@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Theme } from "../theme";
 import { List } from "../utils/list";
 import { Text } from "../utils/text";

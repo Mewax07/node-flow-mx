@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Camera } from "../camera";
 import { FlowNode } from "../node";
 import { NodeSubsystem } from "../nodes/subsystem";

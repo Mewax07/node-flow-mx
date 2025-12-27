@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../libs";
+import { HtmlCanvas } from ".";
 import { FlowNode } from "./node";
 import { Port } from "./port";
 import { Vector2 } from "./utils/vector";
