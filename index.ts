@@ -26,5 +26,5 @@ export { NumberWidget };
 import { GlobalWidgetFactory } from "./widgets/factory";
 export { GlobalWidgetFactory };
 
-import { HtmlCanvas } from "../libs";
+import { HtmlCanvas } from "../mx";
 export { HtmlCanvas };
