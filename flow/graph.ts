@@ -1,4 +1,4 @@
-import type { HtmlCanvas } from "../libs";
+import type { HtmlCanvas } from ".";
 import { Camera } from "./camera";
 import { Connection } from "./connection";
 import { MouseObserver } from "./input";

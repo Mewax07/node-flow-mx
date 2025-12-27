@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../libs";
+import { HtmlCanvas } from ".";
 import { Camera } from "./camera";
 import { combineContextMenus, ContextMenuConfig, ContextMenuItemConfig } from "./menu/context";
 import { nodeFlowGroup } from "./nodes/subsystem";

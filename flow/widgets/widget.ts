@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Box } from "../utils/box";
 import { Vector2 } from "../utils/vector";
 

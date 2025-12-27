@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { FlowNode } from "../node";
 import { TextBoxStyle, TextBoxStyleConfig, textBoxStyleWithFallback } from "../styles/textbox";
 import { Theme } from "../theme";

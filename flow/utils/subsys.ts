@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { Camera } from "../camera";
 import { RenderResults } from "../graph";
 import { ContextMenuConfig } from "../menu/context";

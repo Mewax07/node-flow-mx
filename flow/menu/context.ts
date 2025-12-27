@@ -1,4 +1,4 @@
-import { HtmlCanvas } from "../../libs";
+import { HtmlCanvas } from "../.";
 import { TextAlign } from "../elements/text";
 import { TextStyle, TextStyleConfig } from "../styles/text";
 import { Theme } from "../theme";
