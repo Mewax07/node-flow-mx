@@ -6,8 +6,7 @@
         "build": "tsc && vite build",
         "preview": "vite preview",
         "tauri": "tauri",
-        "parse": "bunx prettier --write \"flow/**/*.ts\"",
-        "push": "start .\\scripts\\push.bat"
+        "parse": "bunx prettier --write \"flow/**/*.ts\""
     },
     "devDependencies": {
         "@types/bun": "latest",
