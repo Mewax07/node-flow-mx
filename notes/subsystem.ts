@@ -63,7 +63,7 @@ export class NoteSubsystem {
         }
     }
 
-    addNote(note: FlowNote): void {
+    addNote(note: FlowNote) {
         if (note === null || note === undefined) {
             return;
         }
@@ -74,28 +74,28 @@ export class NoteSubsystem {
         }
     }
 
-    public addNoteAddedListener(callback: NoteAddedCallback): void {
+    public addNoteAddedListener(callback: NoteAddedCallback) {
         if (callback === null || callback === undefined) {
             return;
         }
         this.onNoteAddedCallbacks.push(callback);
     }
 
-    public addNoteRemovedListener(callback: NoteRemovedCallback): void {
+    public addNoteRemovedListener(callback: NoteRemovedCallback) {
         if (callback === null || callback === undefined) {
             return;
         }
         this.onNoteRemovedCallbacks.push(callback);
     }
 
-    public addNoteDragStartListener(callback: NoteDragStartCallback): void {
+    public addNoteDragStartListener(callback: NoteDragStartCallback) {
         if (callback === null || callback === undefined) {
             return;
         }
         this.onNoteDragStartCallbacks.push(callback);
     }
 
-    public addNoteDragStopListener(callback: NoteDragStopCallback): void {
+    public addNoteDragStopListener(callback: NoteDragStopCallback) {
         if (callback === null || callback === undefined) {
             return;
         }
@@ -175,7 +175,7 @@ export class NoteSubsystem {
         return false;
     }
 
-    clickEnd(): void {
+    clickEnd() {
         if (this.noteSelected !== null) {
             this.noteSelected.selectHandle(DragHandle.None);
             for (let i = 0; i < this.onNoteDragStopCallbacks.length; i++) {
@@ -198,7 +198,7 @@ export class NoteSubsystem {
         return true;
     }
 
-    removeNote(note: FlowNote): void {
+    removeNote(note: FlowNote) {
         const index = this.notes.indexOf(note);
         if (index > -1) {
             const noteRemoved = this.notes[index];
@@ -210,6 +210,10 @@ export class NoteSubsystem {
         } else {
             console.error("no note found to remove");
         }
+    }
+
+    getNotes() {
+        return this.notes;
     }
 
     render(canvas: HtmlCanvas, camera: Camera, mousePosition: Vector2 | undefined): RenderResults | undefined {
