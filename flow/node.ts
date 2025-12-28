@@ -5,7 +5,7 @@ import { nodeFlowGroup } from "./nodes/subsystem";
 import { Port, PortConfig, PortType } from "./port";
 import { BoxStyle, BoxStyleConfig } from "./styles/box";
 import { FontWeight, TextStyle, TextStyleConfig } from "./styles/text";
-import { Theme } from "./theme";
+import { onThemeChange, Theme } from "./theme";
 import { Box } from "./utils/box";
 import { Cfg } from "./utils/config";
 import { Metadata, TextAlign, TextBaseline } from "./utils/constants";
@@ -353,6 +353,19 @@ export class FlowNode {
                 this.addWidget(GlobalWidgetFactory.create(this, widget.type, widget.config));
             }
         }
+
+        onThemeChange((theme) => {
+            this.title.setColor(theme.Node.FontColor);
+            this.subTitle.setColor(theme.Node.FontColor);
+            this.infoSymbol.setColor(theme.Node.FontColor);
+
+            this.stateStyles.get(NodeState.Idle)?.setColor(theme.Node.BackgroundColor).setRadius(theme.Node.BorderRadius).setBorderColor(theme.Node.Border.Idle);
+            this.stateStyles.get(NodeState.MouseOver)?.setColor(theme.Node.BackgroundColor).setRadius(theme.Node.BorderRadius).setBorderColor(theme.Node.Border.MouseOver);
+            this.stateStyles.get(NodeState.Grabbed)?.setColor(theme.Node.BackgroundColor).setRadius(theme.Node.BorderRadius).setBorderColor(theme.Node.Border.Grabbed);
+
+            this.selectedStyle.setColor(theme.Node.BackgroundColor).setRadius(theme.Node.BorderRadius).setBorderColor(theme.Node.Border.Selected);
+            this.portTextStyle.setColor(Cfg.value(config?.style?.portText?.color, theme.Node.Port.FontColor));
+        });
     }
 
     public getMetadata(): any {

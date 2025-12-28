@@ -12,7 +12,7 @@ import { NoteAddedCallback, NoteDragStartCallback, NoteDragStopCallback, NoteRem
 import { Minimap, MinimapConfig } from "./plugins/minimap";
 import { Plugin, PluginManager } from "./plugins/plugin";
 import { CursorStyle } from "./styles/cursor";
-import { Theme } from "./theme";
+import { onThemeChange, Theme } from "./theme";
 import { Cfg } from "./utils/config";
 import { clamp01, exec } from "./utils/constants";
 import { VectorPool } from "./utils/pool";
@@ -91,11 +91,6 @@ interface OpenContextMenu {
     menu: ContextMenu;
     pos: Vector2;
 }
-
-// interface OpenQuickMenu {
-//     // menu: QuickMenu;
-//     pos: Vector2;
-// }
 
 export class GraphView {
     private subsys: Array<GraphSubsystem>;
@@ -232,6 +227,10 @@ export class NodeFlowGraph {
         } else {
             const backgroundColor = Cfg.value(config?.backgroundColor, Theme.Graph.BackgroundColor);
             this.backgroundRenderer = buildBackgroundRenderer(backgroundColor);
+
+            onThemeChange((theme) => {
+                this.backgroundRenderer = buildBackgroundRenderer(theme.Graph.BackgroundColor);
+            });
         }
 
         window.requestAnimationFrame(this.render.bind(this));

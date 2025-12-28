@@ -1,7 +1,7 @@
 import { HtmlCanvas } from "../.";
 import { FlowNode } from "../node";
 import { TextBoxStyle, TextBoxStyleConfig, textBoxStyleWithFallback } from "../styles/textbox";
-import { Theme } from "../theme";
+import { onThemeChange, Theme } from "../theme";
 import { Box } from "../utils/box";
 import { Cfg } from "../utils/config";
 import { Vector2 } from "../utils/vector";
@@ -59,6 +59,35 @@ export class NumberWidget extends Widget {
         );
         this.set(Cfg.value(config?.value, 0));
         this.callback = config?.callback;
+
+        onThemeChange((theme) => {
+            this.idleBoxStyle = new TextBoxStyle(
+                textBoxStyleWithFallback(config?.idleBoxStyle, {
+                    box: {
+                        color: theme.Widget.BackgroundColor,
+                        border: {
+                            size: theme.Widget.Border.Size,
+                            color: theme.Widget.Border.Color,
+                        },
+                        radius: theme.Widget.Border.Radius,
+                    },
+                    text: { color: theme.Widget.FontColor },
+                }),
+            );
+            this.highlightBoxStyle = new TextBoxStyle(
+                textBoxStyleWithFallback(config?.highlightBoxStyle, {
+                    box: {
+                        color: theme.Widget.Hover.BackgroundColor,
+                        border: {
+                            size: theme.Widget.Border.Size,
+                            color: theme.Widget.Border.Color,
+                        },
+                        radius: theme.Widget.Border.Radius,
+                    },
+                    text: { color: theme.Widget.FontColor },
+                }),
+            );
+        });
 
         if (this.nodeProperty) {
             this.node.addPropertyChangeListener(this.nodeProperty, (_oldVal, newVal) => {

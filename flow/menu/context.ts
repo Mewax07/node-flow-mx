@@ -1,7 +1,7 @@
 import { HtmlCanvas } from "../.";
 import { TextAlign } from "../elements/text";
 import { TextStyle, TextStyleConfig } from "../styles/text";
-import { Theme } from "../theme";
+import { onThemeChange, Theme } from "../theme";
 import { Box } from "../utils/box";
 import { Cfg } from "../utils/config";
 import { List } from "../utils/list";
@@ -136,6 +136,10 @@ export class ContextMenu {
                 this.items.push(new ContextMenuItem(config?.items[i]));
             }
         }
+
+        onThemeChange((theme) => {
+            this.textStyle.setColor(theme.ContextMenu.FontColor);
+        });
 
         this.calculateEntries();
     }

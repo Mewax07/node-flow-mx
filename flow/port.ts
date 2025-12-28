@@ -6,7 +6,7 @@ import { ContainerRenderElement } from "./elements/container";
 import { TextAlign, TextElement } from "./elements/text";
 import { FlowNode } from "./node";
 import { FontStyle } from "./styles/text";
-import { Theme } from "./theme";
+import { onThemeChange, Theme } from "./theme";
 import { Box } from "./utils/box";
 import { Color, HSV, HSV2RGB, rbgToHex } from "./utils/color";
 import { Cfg } from "./utils/config";
@@ -26,7 +26,7 @@ export type PortStyle = Partial<{
     fillColor: string;
     borderColor: string;
     borderSize: number;
-}>
+}>;
 
 type ConnectionChangeCallback = (connection: Connection, connectionIndex: number, port: Port, portType: PortType, node: FlowNode) => void;
 
@@ -41,15 +41,15 @@ export type PortConfig = Partial<{
     onConnectionRemoved: ConnectionChangeCallback;
 }>;
 
-function fallbackColor(type: string, s: number): string {
+function fallbackColor(type: string, s: number, mod: number = 24): string {
     let value = 0;
     for (let i = 0; i < type.length; i++) {
         value += type.charCodeAt(i) * (i + 1);
     }
 
-    value = Math.round(value) % 24;
+    value = Math.round(value) % mod;
 
-    const hsv: HSV = { h: (value / 23) * 360, s, v: 1 };
+    const hsv: HSV = { h: (value / (mod - 1)) * 360, s, v: 1 };
     const color: Color = { r: 0, g: 0, b: 0 };
     HSV2RGB(hsv, color);
     return rbgToHex(color);
@@ -85,10 +85,15 @@ export class Port {
 
         this.filledStyle = {
             borderColor: Cfg.value(config?.filledStyle?.borderColor, Theme.Node.Port.BorderColor),
-            fillColor: Cfg.value(config?.filledStyle?.fillColor, fallbackColor(this.dataType, 0.2)),
+            fillColor: Cfg.value(config?.filledStyle?.fillColor, fallbackColor(this.dataType, Theme.Node.Port.FallbackValue)),
             borderSize: Cfg.value(config?.filledStyle?.borderSize, 1),
             size: Cfg.value(config?.filledStyle?.size, 5),
         };
+
+        onThemeChange((theme) => {
+            this.emptyStyle.borderColor = Cfg.value(config?.emptyStyle?.borderColor, theme.Node.Port.BorderColor);
+            this.filledStyle.borderColor = Cfg.value(config?.filledStyle?.borderColor, theme.Node.Port.BorderColor);
+        });
 
         this.onConnectionAdded = new Array();
         if (config?.onConnectionAdded) {

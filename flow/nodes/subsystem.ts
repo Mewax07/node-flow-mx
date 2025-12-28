@@ -8,7 +8,7 @@ import { organize_internal_plugin } from "../plugins/tools/organise";
 import { Port, PortType } from "../port";
 import { BoxStyle } from "../styles/box";
 import { CursorStyle } from "../styles/cursor";
-import { Theme } from "../theme";
+import { onThemeChange, Theme } from "../theme";
 import { Box } from "../utils/box";
 import { Cfg } from "../utils/config";
 import { exec } from "../utils/constants";
@@ -108,6 +108,17 @@ export class NodeSubsystem {
             },
             color: "#00000000",
             radius: Theme.BoxSelect.Radius,
+        });
+
+        onThemeChange((theme) => {
+            this.boxSelectStyle = new BoxStyle({
+                border: {
+                    color: theme.BoxSelect.Color,
+                    size: theme.BoxSelect.Size,
+                },
+                color: "#00000000",
+                radius: theme.BoxSelect.Radius,
+            });
         });
     }
 

@@ -1,5 +1,5 @@
 import { FontStrike, FontWeight } from "../styles/text";
-import { Theme } from "../theme";
+import { onThemeChange, Theme } from "../theme";
 import { Text } from "../utils/text";
 import { BasicMarkdownEntry, BlockQuoteMarkdownEntry, CodeBlockEntry, ListItem, MarkdownEntry, UnorderedListMarkdownEntry } from "./entry";
 import { MarkdownToken, MarkdownTokenType } from "./token";
@@ -80,6 +80,23 @@ export class MarkdownParser {
                             ? Theme.Note.H5.FontSize
                             : Theme.Note.H6.FontSize,
             );
+
+            onThemeChange((theme) => {
+                t.setColor(theme.Note.FontColor);
+                t.setSize(
+                    level === MarkdownTokenType.H1
+                        ? theme.Note.H1.FontSize
+                        : level === MarkdownTokenType.H2
+                          ? theme.Note.H2.FontSize
+                          : level === MarkdownTokenType.H3
+                            ? theme.Note.H3.FontSize
+                            : level === MarkdownTokenType.H4
+                              ? theme.Note.H4.FontSize
+                              : level === MarkdownTokenType.H5
+                                ? theme.Note.H5.FontSize
+                                : theme.Note.H6.FontSize,
+                );
+            });
         }
 
         return new BasicMarkdownEntry(texts, true, false);
@@ -97,6 +114,11 @@ export class MarkdownParser {
         const text = new Text(this.source.slice(start, end));
         text.setColor(Theme.Note.FontColor);
         text.setSize(Theme.Note.FontSize);
+
+        onThemeChange((theme) => {
+            text.setColor(theme.Note.FontColor);
+            text.setSize(theme.Note.FontSize);
+        });
 
         return new CodeBlockEntry(text);
     }
@@ -120,6 +142,12 @@ export class MarkdownParser {
         for (const t of texts) {
             t.setIndent((depth - 1) * Theme.Note.QuoteIndent);
         }
+
+        onThemeChange((theme) => {
+            for (const t of texts) {
+                t.setIndent((depth - 1) * theme.Note.QuoteIndent);
+            }
+        });
 
         const entry = new BasicMarkdownEntry(texts, false, false);
         return new BlockQuoteMarkdownEntry(entry, depth);

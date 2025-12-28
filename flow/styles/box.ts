@@ -48,22 +48,28 @@ export class BoxStyle {
         canvas.line(box.pos.x, box.pos.y + box.size.y, box.pos.x + box.size.x, box.pos.y + box.size.y);
     }
 
-    borderSize(): number {
+    borderSize() {
         if (this.border === null) {
             return 0;
         }
         return this.border.getSize();
     }
 
-    getRadius(): number {
+    getRadius() {
         return this.radius;
     }
 
-    setColor(color: string): void {
+    setColor(color: string) {
         this.color = color;
+        return this;
     }
 
-    setBorderColor(color: string): void {
+    setRadius(radius: number) {
+        this.radius = radius;
+        return this;
+    }
+
+    setBorderColor(color: string) {
         if (this.border === null) {
             this.border = new StrokeStyle({
                 color: color,
@@ -71,6 +77,7 @@ export class BoxStyle {
         } else {
             this.border.setColor(color);
         }
+        return this;
     }
 
     public static boxStyleWithFallbackWithSelf(input?: BoxStyleConfig, fallback?: BoxStyleConfig): BoxStyle {
