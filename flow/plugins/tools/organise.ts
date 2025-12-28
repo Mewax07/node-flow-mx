@@ -1,9 +1,9 @@
-import { HtmlCanvas } from "../.";
-import { Camera } from "../camera";
-import { FlowNode } from "../node";
-import { NodeSubsystem } from "../nodes/subsystem";
-import { Box } from "../utils/box";
-import { Vector2 } from "../utils/vector";
+import { HtmlCanvas } from "../..";
+import { Camera } from "../../camera";
+import { FlowNode } from "../../node";
+import { NodeSubsystem } from "../../nodes/subsystem";
+import { Box } from "../../utils/box";
+import { Vector2 } from "../../utils/vector";
 
 function markInputs(graph: NodeSubsystem, positions: Array<number>, nodeLUT: Map<FlowNode, number>, node: number, depth: number, shouldSort: Map<FlowNode, boolean>) {
     const inputs = graph.connectedInputsNodeReferencesByIndex(node);

@@ -4,7 +4,7 @@ import { Connection, ConnectionRenderer, defaultConnectionRenderer } from "../co
 import { RenderResults } from "../graph";
 import { combineContextMenus, ContextMenuConfig } from "../menu/context";
 import { FlowNode, NodeState } from "../node";
-import { organize_internal_plugin } from "../plugins/organise";
+import { organize_internal_plugin } from "../plugins/tools/organise";
 import { Port, PortType } from "../port";
 import { BoxStyle } from "../styles/box";
 import { CursorStyle } from "../styles/cursor";
@@ -225,6 +225,7 @@ export class NodeSubsystem {
         }
         return this.interactingWithConnection() || this.interactingWithWidget() || this.boxSelect;
     }
+
     clearNodeInputConnection(node: FlowNode, index: number) {
         const port = node.inputPort(index);
         for (let i = this.connections.length - 1; i >= 0; i--) {

@@ -158,6 +158,10 @@ export class FlowNote {
         this.contentChangeCallbacks.push(callback);
     }
 
+    getRenderingBox() {
+        return this.lastRenderedBox;
+    }
+
     render(canvas: HtmlCanvas, camera: Camera, mousePosition: Vector2 | undefined): void {
         if (this.edittingLayout && (this.hovering || this.handleSelected !== DragHandle.None)) {
             if (mousePosition) {

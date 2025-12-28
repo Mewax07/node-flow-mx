@@ -1,5 +1,5 @@
 import type { HtmlCanvas } from ".";
-import { Camera } from "./camera";
+import { Camera, CameraConfig } from "./camera";
 import { Connection } from "./connection";
 import { MouseObserver } from "./input";
 import { combineContextMenus, ContextEntry, ContextMenu, ContextMenuConfig } from "./menu/context";
@@ -9,6 +9,8 @@ import { Publisher } from "./nodes/publisher";
 import { ConnectionRendererConfig, NodeAddedCallback, NodeRemovedCallback, NodeSubsystem } from "./nodes/subsystem";
 import { FlowNote } from "./notes/note";
 import { NoteAddedCallback, NoteDragStartCallback, NoteDragStopCallback, NoteRemovedCallback, NoteSubsystem, NoteSubsystemConfig } from "./notes/subsystem";
+import { Minimap, MinimapConfig } from "./plugins/minimap";
+import { Plugin, PluginManager } from "./plugins/plugin";
 import { CursorStyle } from "./styles/cursor";
 import { Theme } from "./theme";
 import { Cfg } from "./utils/config";
@@ -48,6 +50,11 @@ function buildBackgroundRenderer(backgroundColor: string) {
     };
 }
 
+export type InternalPlugins = Partial<{
+    minimap: MinimapConfig;
+    minimapEnabled: boolean;
+}>;
+
 export type FlowNodeGraphConfig = Partial<{
     backgroundRenderer: GraphRenderer;
     backgroundColor: string;
@@ -58,6 +65,10 @@ export type FlowNodeGraphConfig = Partial<{
 
     nodes: NodeFactoryConfig;
     board: NoteSubsystemConfig;
+
+    camera: CameraConfig;
+
+    internals: InternalPlugins;
 }>;
 
 export interface RenderResults {
@@ -156,11 +167,12 @@ export class NodeFlowGraph {
     private camera: Camera;
 
     private openedContextMenu: OpenContextMenu | null;
-    // private openQuickMenu: OpenQuickMenu | null;
     private contextMenuEntryHovering: ContextEntry | null;
 
     private views: Array<GraphView>;
     private currentView_n: number;
+
+    private plugins: PluginManager;
 
     private mainNodeSubsystem: NodeSubsystem;
     private mainNoteSubsystem: NoteSubsystem;
@@ -184,7 +196,18 @@ export class NodeFlowGraph {
         this.views = [new GraphView([this.mainNoteSubsystem, this.mainNodeSubsystem, postProcess])];
         this.currentView_n = 0;
 
-        this.camera = new Camera();
+        if (config?.internals?.minimapEnabled === true) {
+            const minimap = new Minimap(config.internals.minimap ?? undefined);
+            this.plugins = new PluginManager([minimap], this.mainNodeSubsystem, this.mainNoteSubsystem);
+        } else {
+            this.plugins = new PluginManager([], this.mainNodeSubsystem, this.mainNoteSubsystem);
+        }
+
+        this.camera = new Camera({
+            min: Cfg.value(config?.camera?.min, undefined),
+            max: Cfg.value(config?.camera?.max, undefined),
+            start: Cfg.value(config?.camera?.start, undefined),
+        });
 
         this.contextMenuConfig = combineContextMenus(
             {
@@ -200,7 +223,6 @@ export class NodeFlowGraph {
         );
 
         this.openedContextMenu = null;
-        // this.openQuickMenu = null;
         this.contextMenuEntryHovering = null;
 
         this.canvas = canvas;
@@ -267,7 +289,7 @@ export class NodeFlowGraph {
             oldPos = this.screenPositionToGraphPosition(this.mousePosition);
         }
 
-        this.camera.zoom += amount * this.camera.zoom * 0.05;
+        this.camera.addZoom(amount * this.camera.zoom * 0.05);
 
         if (!oldPos || !this.mousePosition) {
             return;
@@ -292,11 +314,11 @@ export class NodeFlowGraph {
             return;
         }
         this.openedContextMenu = null;
-        // this.openQuickMenu = null;
         this.contextMenuEntryHovering = null;
 
         this.mousePosition = mousePosition;
         this.currentView().clickStart(mousePosition, this.camera, ctrlKey);
+        this.plugins.clickStart(mousePosition, this.camera, ctrlKey);
     }
 
     currentView(): GraphView {
@@ -339,6 +361,10 @@ export class NodeFlowGraph {
         this.mainNoteSubsystem.addNote(note);
     }
 
+    registerPlugin(plugin: Plugin) {
+        this.plugins.register(plugin);
+    }
+
     private sceenPositionToGraphPosition(screenPosition: Vector2): Vector2 {
         const out = new Vector2();
         this.camera.screenSpaceToGraphSpace(screenPosition, out);
@@ -351,6 +377,7 @@ export class NodeFlowGraph {
         const contextMenuPosition = this.sceenPositionToGraphPosition(position);
 
         finalConfig = combineContextMenus(finalConfig, this.currentView().openContextMenu(this.canvas, contextMenuPosition));
+        finalConfig = combineContextMenus(finalConfig, this.plugins.openContextMenu(this.canvas, contextMenuPosition));
 
         this.openedContextMenu = {
             menu: new ContextMenu(finalConfig),
@@ -360,10 +387,11 @@ export class NodeFlowGraph {
 
     private clickEnd() {
         this.currentView().clickEnd();
+        this.plugins.clickEnd();
     }
 
     private mouseDragEvent(delta: Vector2) {
-        let draggingSomething = this.currentView().mouseDragEvent(delta, this.camera.zoom);
+        let draggingSomething = this.currentView().mouseDragEvent(delta, this.camera.zoom) || this.plugins.mouseDragEvent(delta, this.camera.zoom);
         if (!draggingSomething) {
             this.camera.position.x += delta.x;
             this.camera.position.y += delta.y;
@@ -387,9 +415,14 @@ export class NodeFlowGraph {
             }
         });
 
-        exec("Render_Context", this.renderContextMenu.bind(this));
+        exec("Render_Plugin", () => {
+            let results = this.plugins.render(this.canvas, this.camera, this.mousePosition);
+            if (results?.cursorStyle) {
+                results.cursorStyle = results?.cursorStyle;
+            }
+        });
 
-        // exec("Render_QuickMenu", this.renderQuickMenu.bind(this));
+        exec("Render_Context", this.renderContextMenu.bind(this));
 
         if (this.lastFrameCursor !== this.cursor) {
             this.canvas.elm.style.cursor = this.cursor;

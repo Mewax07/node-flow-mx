@@ -94,4 +94,12 @@ export const Theme = {
             BorderRadius: 4,
         },
     },
+    Minimap: {
+        BackgroundColor: "#0a0a0a",
+        BorderColor: "#7f5539",
+        NodeFill: "#0d0d0d",
+        NodeStroke: "#ddb892",
+        ViewportStroke: "#e6dccf",
+        LineWidth: 2,
+    },
 };

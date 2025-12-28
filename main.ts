@@ -1,12 +1,18 @@
+import { Minimap } from "./flow";
 import { NodeFlowGraph } from "./flow/graph";
 import { FlowNode, MessageType } from "./flow/node";
 import { FlowNote } from "./flow/notes/note";
 import { Vector2 } from "./flow/utils/vector";
-import { Html } from "./libs";
+import { Html } from "./mx";
 
 const canvas = Html.canvas().appendTo(document.body);
 
 const graph = new NodeFlowGraph(canvas, {
+    camera: {
+        start: 2,
+        min: 0.3,
+        max: 5,
+    },
     nodes: {
         publishers: {
             example: {
@@ -25,6 +31,8 @@ const graph = new NodeFlowGraph(canvas, {
         },
     },
 });
+
+graph.registerPlugin(new Minimap());
 
 graph.addNote(
     new FlowNote({

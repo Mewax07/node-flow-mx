@@ -1,4 +1,4 @@
-import { Html } from "../libs";
+import { Html } from "../mx";
 import { Vector2 } from "./utils/vector";
 
 export class MouseObserver {

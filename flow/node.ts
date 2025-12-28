@@ -200,8 +200,8 @@ export class FlowNode {
         this.widgets = new Array();
         this.widgetPositions = new List();
 
-        this.inputPortPositions = new List<Box>();
-        this.outputPortPositions = new List<Box>();
+        this.inputPortPositions = new List();
+        this.outputPortPositions = new List();
 
         this.elementSpacing = 15;
         this.locked = Cfg.value(config?.locked, false);
