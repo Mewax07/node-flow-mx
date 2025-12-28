@@ -175,8 +175,8 @@ export class BasicMarkdownEntry implements MarkdownEntry {
         this.background = background;
         this.calculatedForWidth = -1;
 
-        this.calculatedEntries = new List<Text>();
-        this.calculatedPositions = new List<Vector2>();
+        this.calculatedEntries = new List();
+        this.calculatedPositions = new List();
 
         document.fonts.addEventListener("loadingdone", (_) => {
             this.calculatedForWidth = -1;

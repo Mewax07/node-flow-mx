@@ -84,8 +84,8 @@ export class Minimap extends Plugin {
             const w = (b.size.x / canvasW) * minimapWidth * minimapZoom;
             const h = (b.size.y / canvasH) * minimapHeight * minimapZoom;
 
-            canvas.fillStyle(Theme.Minimap.NodeFill).roundedRect(x, y, w, h, 2);
-            canvas.lineWidth(Theme.Minimap.LineWidth).strokeStyle(Theme.Minimap.NodeStroke).roundedRect(x, y, w, h, 2, "s");
+            canvas.fillStyle(Theme.Minimap.NoteFill).roundedRect(x, y, w, h, 2);
+            canvas.lineWidth(Theme.Minimap.LineWidth).strokeStyle(Theme.Minimap.NoteStroke).roundedRect(x, y, w, h, 2, "s");
         }
 
         for (const node of nodes) {
@@ -106,7 +106,7 @@ export class Minimap extends Plugin {
 
         canvas.save().begin();
 
-        canvas.fillStyle("rgba(20, 20, 20, 0.6)");
+        canvas.fillStyle("rgba(10, 10, 10, 0.4)");
         canvas.rect(minimapX, minimapY, minimapWidth, viewY - minimapY);
         canvas.rect(minimapX, viewY + viewH, minimapWidth, minimapY + minimapHeight - (viewY + viewH));
         canvas.rect(minimapX, viewY, viewX - minimapX, viewH);

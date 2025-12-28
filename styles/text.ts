@@ -1,5 +1,5 @@
 import { HtmlCanvas } from "../.";
-import { Theme } from "../theme";
+import { onThemeChange, Theme } from "../theme";
 import { Cfg } from "../utils/config";
 import { Vector2 } from "../utils/vector";
 
@@ -28,11 +28,6 @@ export type TextStyleConfig = Partial<{
     strike: FontStrike;
 }>;
 
-const defaultProps = {
-    size: 16,
-    color: "black",
-};
-
 export class TextStyle {
     private size: number;
     private color: string;
@@ -42,12 +37,18 @@ export class TextStyle {
     private strike: FontStrike;
 
     constructor(config?: TextStyleConfig) {
-        this.size = Cfg.value(config?.size, defaultProps.size);
-        this.color = Cfg.value(config?.color, defaultProps.color);
+        this.size = Cfg.value(config?.size, Theme.Note.H6.FontSize);
+        this.color = Cfg.value(config?.color, Theme.Note.FontColor);
         this.font = Cfg.value(config?.font, Theme.FontFamily);
         this.weight = Cfg.value(config?.weight, FontWeight.Normal);
         this.fontStyle = Cfg.value(config?.style, FontStyle.Normal);
         this.strike = Cfg.value(config?.strike, FontStrike.Normal);
+
+        onThemeChange((theme) => {
+            this.size = Cfg.value(config?.size, theme.Note.H6.FontSize);
+            this.color = Cfg.value(config?.color, theme.Note.FontColor);
+            this.font = Cfg.value(config?.font, theme.FontFamily);
+        });
     }
 
     setupStyle(canvas: HtmlCanvas, scale: number) {
