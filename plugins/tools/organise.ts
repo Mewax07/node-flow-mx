@@ -58,7 +58,7 @@ export function organize_internal_plugin(canvas: HtmlCanvas, graph: NodeSubsyste
 
     for (let i = 0; i < nodes.length; i++) {
         bounds[i] = nodes[i].calculateBounds(canvas, camera);
-        relativePos[i] = new Array<number>(nodes.length);
+        relativePos[i] = new Array(nodes.length);
         nodeLUT.set(nodes[i], i);
         claimed[i] = false;
     }
@@ -114,7 +114,7 @@ export function organize_internal_plugin(canvas: HtmlCanvas, graph: NodeSubsyste
     const columns = Array<Column>(entries[0].length + 1);
     for (let i = 0; i < columns.length; i++) {
         columns[i] = {
-            Nodes: new Array<FlowNode>(),
+            Nodes: new Array(),
             Width: 0,
         };
     }

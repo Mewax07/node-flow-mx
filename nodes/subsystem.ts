@@ -8,6 +8,7 @@ import { organize_internal_plugin } from "../plugins/tools/organise";
 import { Port, PortType } from "../port";
 import { BoxStyle } from "../styles/box";
 import { CursorStyle } from "../styles/cursor";
+import { GraphSubsystem } from "../subsys";
 import { onThemeChange, Theme } from "../theme";
 import { Box } from "../utils/box";
 import { Cfg } from "../utils/config";
@@ -55,7 +56,7 @@ type NodeSybsystemConfig = Partial<{
     nodes: NodeFactoryConfig;
 }>;
 
-export class NodeSubsystem {
+export class NodeSubsystem extends GraphSubsystem {
     private postProcess: Subsystem;
     private nodes: Array<FlowNode>;
     private connections: Array<Connection>;
@@ -80,6 +81,7 @@ export class NodeSubsystem {
     private registeredNodeAddedCallbacks: Array<NodeAddedCallback>;
 
     constructor(postProcess: Subsystem, config?: NodeSybsystemConfig) {
+        super();
         this.postProcess = postProcess;
         this.nodes = [];
         this.nodeHovering = -1;
@@ -156,7 +158,7 @@ export class NodeSubsystem {
             this.selectNodeByIndex(this.nodeHovering, !ctrlKey);
 
             for (let i = 0; i < this.nodes.length; i++) {
-                if (this.nodes[i].getSelected()) {
+                if (this.nodes[i].isSelected()) {
                     this.nodesGrabbed.push(i);
                 }
             }
@@ -473,7 +475,7 @@ export class NodeSubsystem {
     private nodesSelected() {
         const selected = new Array<number>();
         for (let i = 0; i < this.nodes.length; i++) {
-            if (this.nodes[i].getSelected()) {
+            if (this.nodes[i].isSelected()) {
                 selected.push(i);
             }
         }
@@ -627,6 +629,9 @@ export class NodeSubsystem {
             let portMousedOver = false;
             if (mousePosition) {
                 portMousedOver = this.connections[i].mouseOverPort(mousePosition) !== null;
+                if (portMousedOver) {
+                    this.cursor = CursorStyle.Pointer;
+                }
             }
             this.connections[i].render(canvas, camera.zoom, portMousedOver, mousePosition);
         }
@@ -674,7 +679,7 @@ export class NodeSubsystem {
                 }
             }
 
-            if (this.nodes[i].getSelected() && this.nodesGrabbed.count() > 0) {
+            if (this.nodes[i].isSelected() && this.nodesGrabbed.count() > 0) {
                 state = NodeState.Grabbed;
                 this.cursor = CursorStyle.Grabbing;
             }

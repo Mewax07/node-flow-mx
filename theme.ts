@@ -28,6 +28,7 @@ export const PALETTE_KEYS = [
     "widget.font",
     "widget.border",
     "widget.hover",
+    "widget.blured",
     "widget.slider",
     "widget.button",
 
@@ -61,8 +62,8 @@ export function legacyThemeToPalette(t: LegacyTheme): Palette {
         "node.title.bg": t.css["--mocha-border"],
         "node.title.font": t.css["--mocha-text"],
         "node.border.idle": t.css["--mocha-border"],
-        "node.border.hover": t.css["--mocha-border-soft"],
-        "node.border.grab": t.css["--mocha-accent-soft"],
+        "node.border.hover": t.css["--mocha-accent-soft"],
+        "node.border.grab": t.css["--mocha-border-soft"],
         "node.border.selected": t.css["--mocha-accent"],
         "node.port.font": t.css["--mocha-text-muted"],
         "node.port.border": t.css["--mocha-border"],
@@ -75,6 +76,7 @@ export function legacyThemeToPalette(t: LegacyTheme): Palette {
         "widget.font": t.css["--mocha-text"],
         "widget.border": t.css["--mocha-border"],
         "widget.hover": t.css["--_-bg_c_h"],
+        "widget.blured": t.css["--_-bg_c_h"].slice(0, 7) + "aa",
         "widget.slider": t.css["--mocha-selection"],
         "widget.button": t.css["--mocha-accent"],
 
@@ -145,6 +147,9 @@ export type GraphTheme = {
             Radius: number;
         };
         Hover: {
+            BackgroundColor: string;
+        };
+        Blured: {
             BackgroundColor: string;
         };
         Slider: {
@@ -255,9 +260,20 @@ export function buildTheme(p: Palette): GraphTheme {
                 Size: 2,
                 Radius: 2,
             },
-            Hover: { BackgroundColor: p["widget.hover"] },
-            Slider: { FillColor: p["widget.slider"] },
-            Button: { Click: { BackgroundColor: p["widget.button"] } },
+            Hover: {
+                BackgroundColor: p["widget.hover"],
+            },
+            Blured: {
+                BackgroundColor: p["widget.blured"],
+            },
+            Slider: {
+                FillColor: p["widget.slider"],
+            },
+            Button: {
+                Click: {
+                    BackgroundColor: p["widget.button"],
+                },
+            },
         },
         ContextMenu: {
             BackgroundColor: p["context.bg"],
@@ -369,6 +385,3 @@ export function setTheme(name: string) {
 }
 
 setTheme("dark");
-
-(window as any).theme = setTheme;
-(window as any).getTheme = getTheme;

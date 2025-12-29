@@ -32,7 +32,7 @@ export function defaultConnectionRenderer(connectionSize: number, connectionColo
             color = connectionColor;
         }
 
-        if (params.mouseOver || params.inNode?.getSelected() || params.outNode?.getSelected()) {
+        if (params.mouseOver || params.inNode?.isSelected() || params.outNode?.isSelected()) {
             lineSize = mouseOverSize * params.scale;
             params.canvas.shadowBlur(25 * params.scale);
 

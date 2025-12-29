@@ -10,4 +10,6 @@ export abstract class Widget {
     abstract draw(canvas: HtmlCanvas, position: Vector2, scale: number, mousePosition: Vector2 | undefined): Box;
     abstract clickStart(): void;
     abstract clickEnd(): void;
+
+    abstract isBlured?: boolean;
 }

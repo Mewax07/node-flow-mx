@@ -148,7 +148,7 @@ export class ContextMenu {
         const groupLUT = new Map<string, number>();
         const workingGroups = new Array<Array<ContextEntry>>();
 
-        workingGroups.push(new Array<ContextEntry>());
+        workingGroups.push(new Array());
 
         for (let i = 0; i < this.items.length; i++) {
             let group = 0;
@@ -161,7 +161,7 @@ export class ContextMenu {
                 } else {
                     group = workingGroups.length;
                     groupLUT.set(sub.group, group);
-                    workingGroups.push(new Array<ContextEntry>());
+                    workingGroups.push(new Array());
                 }
             }
 
@@ -179,7 +179,7 @@ export class ContextMenu {
                 } else {
                     group = workingGroups.length;
                     groupLUT.set(sub.group, group);
-                    workingGroups.push(new Array<ContextEntry>());
+                    workingGroups.push(new Array());
                 }
             }
 
