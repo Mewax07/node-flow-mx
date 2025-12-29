@@ -12,6 +12,7 @@ import { NoteAddedCallback, NoteDragStartCallback, NoteDragStopCallback, NoteRem
 import { Minimap, MinimapConfig } from "./plugins/minimap";
 import { Plugin, PluginManager } from "./plugins/plugin";
 import { CursorStyle } from "./styles/cursor";
+import { GraphSubsystem } from "./subsys";
 import { onThemeChange, Theme } from "./theme";
 import { Cfg } from "./utils/config";
 import { clamp01, exec } from "./utils/constants";
@@ -75,18 +76,6 @@ export interface RenderResults {
     cursorStyle?: CursorStyle;
 }
 
-export interface GraphSubsystem {
-    render(canvas: HtmlCanvas, camera: Camera, mousePos: Vector2 | undefined): RenderResults | undefined;
-
-    openContextMenu(canvas: HtmlCanvas, pos: Vector2): ContextMenuConfig | null;
-
-    clickStart(mousePos: Vector2, camera: Camera, ctrlKey: boolean): boolean;
-
-    mouseDragEvent(delta: Vector2, scale: number): boolean;
-
-    clickEnd(): void;
-}
-
 interface OpenContextMenu {
     menu: ContextMenu;
     pos: Vector2;
@@ -140,9 +129,9 @@ export class GraphView {
 
         for (let i = 0; i < this.subsys.length; i++) {
             exec("Render_Subsystem_" + i, () => {
-                let results = this.subsys[i].render(canvas, camera, mousePos);
-                if (results?.cursorStyle) {
-                    results.cursorStyle = results?.cursorStyle;
+                let result = this.subsys[i].render(canvas, camera, mousePos);
+                if (result?.cursorStyle) {
+                    results.cursorStyle = result?.cursorStyle;
                 }
             });
         }
@@ -174,6 +163,8 @@ export class NodeFlowGraph {
 
     private lastFrameCursor: CursorStyle;
     private cursor: CursorStyle;
+
+    private paused: boolean = false;
 
     constructor(canvas: HtmlCanvas, config?: FlowNodeGraphConfig) {
         const postProcess = new Subsystem();
@@ -233,7 +224,7 @@ export class NodeFlowGraph {
             });
         }
 
-        window.requestAnimationFrame(this.render.bind(this));
+        window.requestAnimationFrame(this.renderLoop.bind(this));
 
         this.canvas.on("wheel", (e) => {
             e.preventDefault();
@@ -397,6 +388,24 @@ export class NodeFlowGraph {
         }
     }
 
+    public pauseRendering() {
+        this.paused = true;
+    }
+
+    public resumeRendering() {
+        if (this.paused) {
+            this.paused = false;
+            window.requestAnimationFrame(this.renderLoop.bind(this));
+        }
+    }
+
+    private renderLoop() {
+        if (!this.paused) {
+            this.render();
+            window.requestAnimationFrame(this.renderLoop.bind(this));
+        }
+    }
+
     private render() {
         if (this.canvas.elm.parentNode) {
             let rect = (this.canvas.elm.parentNode as any).getBoundingClientRect();
@@ -410,14 +419,14 @@ export class NodeFlowGraph {
         exec("Render_View_" + this.currentView_n, () => {
             let results = this.currentView().render(this.canvas, this.camera, this.mousePosition);
             if (results?.cursorStyle) {
-                results.cursorStyle = results?.cursorStyle;
+                this.cursor = results?.cursorStyle;
             }
         });
 
         exec("Render_Plugin", () => {
             let results = this.plugins.render(this.canvas, this.camera, this.mousePosition);
             if (results?.cursorStyle) {
-                results.cursorStyle = results?.cursorStyle;
+                this.cursor = results?.cursorStyle;
             }
         });
 
@@ -427,8 +436,6 @@ export class NodeFlowGraph {
             this.canvas.elm.style.cursor = this.cursor;
         }
         this.lastFrameCursor = this.cursor;
-
-        window.requestAnimationFrame(this.render.bind(this));
     }
 
     private renderBackground() {

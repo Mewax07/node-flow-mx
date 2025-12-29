@@ -12,6 +12,7 @@ export type NumberWidgetConfig = Partial<{
     property: string;
     idleBoxStyle: TextBoxStyleConfig;
     highlightBoxStyle: TextBoxStyleConfig;
+    blurBoxStyle: TextBoxStyleConfig;
     callback: (newNumber: number) => void;
 }>;
 
@@ -21,8 +22,11 @@ export class NumberWidget extends Widget {
     private value: number;
     private idleBoxStyle: TextBoxStyle;
     private highlightBoxStyle: TextBoxStyle;
+    private bluredBoxStyle: TextBoxStyle;
     private text: string;
     private callback?: (newNumber: number) => void;
+
+    public isBlured: boolean;
 
     constructor(node: FlowNode, config?: NumberWidgetConfig) {
         super();
@@ -57,8 +61,29 @@ export class NumberWidget extends Widget {
                 text: { color: Theme.Widget.FontColor },
             }),
         );
+        this.bluredBoxStyle = new TextBoxStyle(
+            textBoxStyleWithFallback(config?.blurBoxStyle, {
+                box: {
+                    color: Theme.Widget.Blured.BackgroundColor,
+                    border: {
+                        size: Theme.Widget.Border.Size,
+                        color: Theme.Widget.Border.Color,
+                    },
+                    radius: Theme.Widget.Border.Radius,
+                },
+                text: { color: Theme.Widget.FontColor },
+            }),
+        );
         this.set(Cfg.value(config?.value, 0));
         this.callback = config?.callback;
+
+        if (this.nodeProperty) {
+            this.node.addPropertyChangeListener(this.nodeProperty, (_oldVal, newVal) => {
+                this.set(newVal);
+            });
+        }
+
+        this.isBlured = false;
 
         onThemeChange((theme) => {
             this.idleBoxStyle = new TextBoxStyle(
@@ -87,13 +112,20 @@ export class NumberWidget extends Widget {
                     text: { color: theme.Widget.FontColor },
                 }),
             );
+            this.bluredBoxStyle = new TextBoxStyle(
+                textBoxStyleWithFallback(config?.blurBoxStyle, {
+                    box: {
+                        color: theme.Widget.Blured.BackgroundColor,
+                        border: {
+                            size: theme.Widget.Border.Size,
+                            color: theme.Widget.Border.Color,
+                        },
+                        radius: theme.Widget.Border.Radius,
+                    },
+                    text: { color: theme.Widget.FontColor },
+                }),
+            );
         });
-
-        if (this.nodeProperty) {
-            this.node.addPropertyChangeListener(this.nodeProperty, (_oldVal, newVal) => {
-                this.set(newVal);
-            });
-        }
     }
 
     size() {
@@ -118,9 +150,11 @@ export class NumberWidget extends Widget {
         this.text = "" + parseFloat(this.value.toPrecision(6));
     }
 
-    clickStart(): void {}
+    clickStart() {
+        this.isBlured = true;
+    }
 
-    clickEnd(): void {}
+    clickEnd() {}
 
     draw(canvas: HtmlCanvas, position: Vector2, scale: number, mousePosition: Vector2 | undefined): Box {
         const box = new Box();
@@ -133,6 +167,10 @@ export class NumberWidget extends Widget {
             if (box.contains(mousePosition)) {
                 style = this.highlightBoxStyle;
             }
+        }
+
+        if (this.isBlured && style !== this.highlightBoxStyle && this.node.isSelected()) {
+            style = this.bluredBoxStyle;
         }
 
         style.drawUnderline(canvas, box, scale, this.text);

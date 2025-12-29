@@ -43,7 +43,7 @@ export class Minimap extends Plugin {
         const nodes = graph.getNodes();
         const notes = note.getNotes();
 
-        if (nodes.length === 0) return;
+        if (nodes.length + notes.length <= 0) return;
 
         const canvasW = canvas.getWidth();
         const canvasH = canvas.getHeight();

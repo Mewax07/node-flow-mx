@@ -2,6 +2,7 @@ import { HtmlCanvas } from "../.";
 import { Camera } from "../camera";
 import { RenderResults } from "../graph";
 import { ContextMenuConfig } from "../menu/context";
+import { GraphSubsystem } from "../subsys";
 import { Vector2 } from "../utils/vector";
 import { DragHandle, FlowNote, FlowNoteConfig } from "./note";
 
@@ -19,7 +20,7 @@ export type NoteSubsystemConfig = Partial<{
     notes: Array<FlowNoteConfig>;
 }>;
 
-export class NoteSubsystem {
+export class NoteSubsystem extends GraphSubsystem {
     private notes: Array<FlowNote>;
     private noteHovering: FlowNote | null;
     private noteSelected: FlowNote | null;
@@ -30,15 +31,16 @@ export class NoteSubsystem {
     private onNoteDragStopCallbacks: Array<NoteDragStopCallback>;
 
     constructor(config?: NoteSubsystemConfig) {
+        super();
         this.hoveringHandle = DragHandle.None;
         this.notes = [];
         this.noteHovering = null;
         this.noteSelected = null;
 
-        this.onNoteAddedCallbacks = new Array<NoteAddedCallback>();
-        this.onNoteRemovedCallbacks = new Array<NoteRemovedCallback>();
-        this.onNoteDragStartCallbacks = new Array<NoteDragStartCallback>();
-        this.onNoteDragStopCallbacks = new Array<NoteDragStopCallback>();
+        this.onNoteAddedCallbacks = new Array();
+        this.onNoteRemovedCallbacks = new Array();
+        this.onNoteDragStartCallbacks = new Array();
+        this.onNoteDragStopCallbacks = new Array();
 
         if (config?.notes !== undefined) {
             for (let i = 0; i < config?.notes.length; i++) {

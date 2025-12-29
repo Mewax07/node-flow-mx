@@ -372,7 +372,7 @@ export class FlowNode {
         return this.metadata;
     }
 
-    public getSelected() {
+    public isSelected() {
         return this.selected;
     }
 

@@ -9,9 +9,9 @@ const canvas = Html.canvas().appendTo(document.body);
 
 const graph = new NodeFlowGraph(canvas, {
     camera: {
-        start: 2,
+        start: 0.7,
         min: 0.3,
-        max: 5,
+        max: 2,
     },
     nodes: {
         publishers: {
@@ -32,7 +32,7 @@ const graph = new NodeFlowGraph(canvas, {
     },
 });
 
-graph.registerPlugin(new Minimap());
+graph.registerPlugin(new Minimap({}));
 
 graph.addNote(
     new FlowNote({
@@ -79,17 +79,17 @@ var sumNode = new FlowNode({
     title: "Add",
     info: "I add two numbers",
     inputs: [
-        { name: "a", type: "float32" },
-        { name: "b", type: "float32" },
+        { name: "a", type: "int8" },
+        { name: "b", type: "int8" },
     ],
-    outputs: [{ name: "sum", type: "float32", description: "The sum of a and b" }],
+    outputs: [{ name: "sum", type: "int8", description: "The sum of a and b" }],
 });
 
 var aNode = new FlowNode({
     position: new Vector2(450, 500),
     title: "Number",
     info: "I'm a node with a number widget",
-    outputs: [{ name: "value", type: "float32" }],
+    outputs: [{ name: "value", type: "int8" }],
     widgets: [
         {
             type: "number",
@@ -102,7 +102,7 @@ var bNode = new FlowNode({
     position: new Vector2(450, 650),
     title: "Number",
     info: "I'm a node with both a number and image widget on it",
-    outputs: [{ name: "value", type: "float32" }],
+    outputs: [{ name: "value", type: "int8" }],
     widgets: [
         {
             type: "number",
@@ -116,8 +116,8 @@ const arrNode = new FlowNode({
     title: "Add",
     subTitle: "Array Inputs",
     info: "This node contains a port that can take multiple input nodes at once, which can be useful for operations that can operate on [0,n] data sizes",
-    inputs: [{ name: "numbers", type: "float32", array: true, description: "All numbers to add together" }],
-    outputs: [{ name: "sum", type: "float32", description: "The sum of all connected nodes to our 'numbers' port" }],
+    inputs: [{ name: "numbers", type: "int8", array: true, description: "All numbers to add together" }],
+    outputs: [{ name: "sum", type: "int8", description: "The sum of all connected nodes to our 'numbers' port" }],
     messages: [
         {
             message: "I am a message attatched to the node",
